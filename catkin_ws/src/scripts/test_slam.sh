@@ -1,0 +1,8 @@
+#!/bin/sh
+
+export
+TURTLEBOT_GAZEBO_WORLD_FILE=/home/workspace/RoboProj5/catkin_ws/src/map/largehouseworld.world
+
+xterm -e "source /home/workspace/RoboProj5/catkin_ws/devel/setup.bash &&
+roslaunch turtlebot_gazebo turtlebot_world.launch
+world_file:=/home/workspace/RoboProj5/catkin_ws/src/map/largehouseworld.world"
