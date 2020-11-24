@@ -6,8 +6,6 @@
 // Define a client for to send goal requests to the move_base server through a SimpleActionClient
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
-
-
 void goto_goal(double x, double y, std::string goal_name) {
 
   //tell the action client that we want to spin a thread by default

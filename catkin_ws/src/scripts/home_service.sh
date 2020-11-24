@@ -18,6 +18,10 @@ sleep 3
 
 xterm -e "roslaunch turtlebot_rviz_launchers view_navigation.launch" &
 
-sleep 10
+sleep 15
+
+xterm -e "rosrun pick_objects pick_objects" &
+
+sleep 3
 
 xterm -e "rosrun add_markers add_markers"
