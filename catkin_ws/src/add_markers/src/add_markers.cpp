@@ -4,6 +4,7 @@
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <geometry_msgs/Vector3.h>
 #include <cmath>
+#include <string>
 
 
 class add_markers_pubsub {
@@ -14,13 +15,8 @@ class add_markers_pubsub {
 			amcl_pose_sub = n.subscribe("amcl_pose", 1, &add_markers_pubsub::amcl_pose_callback, this);
 		}
 		
-		void place_marker(double x, double y, bool add) {
-			// acceptable odom position error from pickup and dropoff points
-			double tolerance = 0.5;
- 
-			// if at pickup or dropoff points
+		void place_marker(double x, double y, std::string action) {
 
-			
 			// Set our initial shape type to be a cube
 		  	uint32_t shape = visualization_msgs::Marker::CUBE;
 
@@ -38,16 +34,14 @@ class add_markers_pubsub {
 			marker.type = shape;
 
 			// Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
-			if (add) {
+			if (action == "add") {
 				marker.action = visualization_msgs::Marker::ADD;
 			}
-			else {
+			else if (action == "delete") {
 				marker.action = visualization_msgs::Marker::DELETE;
 			}
 
-
-			// Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
-
+			// Set the pose of the marker.
 		  
 			marker.pose.position.x = x;
 			marker.pose.position.y = y;
@@ -58,12 +52,12 @@ class add_markers_pubsub {
 			marker.pose.orientation.z = 0.0;
 			marker.pose.orientation.w = 1.0;
 
-			// Set the scale of the marker -- 1x1x1 here means 1m on a side
+			// Set the scale of the marker
 			marker.scale.x = 0.5;
 			marker.scale.y = 0.5;
 			marker.scale.z = 0.5;
 
-			// Set the color -- be sure to set alpha to something non-zero!
+			// Set the color
 			marker.color.r = 0.5f;
 			marker.color.g = 0.0f;
 			marker.color.b = 1.0f;
@@ -78,28 +72,35 @@ class add_markers_pubsub {
 
 			double amcl_x = (double)msg->pose.pose.position.x;
 			double amcl_y = (double)msg->pose.pose.position.y;	
-			double tol = 0.2;
-			if (pickup) {
+
+			// tolerance, in meters, for amcl pose within pickup / dropoff zones
+			double tol = 0.2;	
+
+			if (marker_count == 1) {
 				if (sqrt(pow(amcl_x - marker_x, 2) + pow(amcl_y - marker_y, 2)) > tol) {
-					place_marker(marker_x, marker_y, true);
+					place_marker(marker_x, marker_y, "place");
 				}
 				else {
-					pickup = false;
-					place_marker(marker_x, marker_y, false);
+					place_marker(marker_x, marker_y, "delete");
 				}
 			}
-      else {
+      
+			if (marker_count == 2) {
 				if (sqrt(pow(amcl_x - marker_x, 2) + pow(amcl_y - marker_y, 2)) < tol) {
-					place_marker(marker_x, marker_y, true);
+					place_marker(marker_x, marker_y, "place");
+				}
+				else {
+					place_marker(marker_x, marker_y, "delete");
 				}
 			}
-			
 		}
-
+		
 		// callback function 
 		void marker_position_callback(const geometry_msgs::Vector3::ConstPtr& msg) {
+			ROS_INFO("Received new marker location");
 			marker_x = (double)msg->x;
-			marker_y = (double)msg->y;	
+			marker_y = (double)msg->y;
+			marker_count += 1;
 		}
 
 	private:
@@ -107,9 +108,9 @@ class add_markers_pubsub {
 		ros::Publisher marker_pub;
 		ros::Subscriber marker_sub;
 		ros::Subscriber amcl_pose_sub;
-		bool pickup = true;
-		double marker_x = 0.0;
-		double marker_y = 0.0;
+		double marker_x;
+		double marker_y;
+		int marker_count = 0;
 	};
 
 

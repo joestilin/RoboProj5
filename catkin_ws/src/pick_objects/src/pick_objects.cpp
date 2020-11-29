@@ -74,15 +74,17 @@ int main(int argc, char** argv){
 
 	// go to the pickup location
   goto_goal(pickup_x, pickup_y, "pickup zone");
+	
+	marker_msg.x = dropoff_x;
+	marker_msg.y = dropoff_y;
+	marker_msg.z = dropoff_z;
+  marker_pub.publish(marker_msg);
 
   ros::Duration(5).sleep();
 
   // go to the dropoff location
   goto_goal(dropoff_x, dropoff_y, "dropoff zone");
-	marker_msg.x = dropoff_x;
-	marker_msg.y = dropoff_y;
-	marker_msg.z = dropoff_z;
-  marker_pub.publish(marker_msg);
+
 
   ros::Duration(5).sleep();  
 
