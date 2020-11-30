@@ -65,11 +65,12 @@ int main(int argc, char** argv){
 	marker_msg.y = pickup_y;
 	marker_msg.z = pickup_z;
 	
-	// block until there is a subscriber to the "marker_pub" topic
+	// block until there is a subscriber to marker_position topic
 	while (marker_pub.getNumSubscribers() < 1) {
-		// wait
+		//
 	}
-	
+
+	// publish pickup location
 	marker_pub.publish(marker_msg);
 
 	// go to the pickup location
@@ -78,6 +79,8 @@ int main(int argc, char** argv){
 	marker_msg.x = dropoff_x;
 	marker_msg.y = dropoff_y;
 	marker_msg.z = dropoff_z;
+
+	// publish dropoff location
   marker_pub.publish(marker_msg);
 
   ros::Duration(5).sleep();
