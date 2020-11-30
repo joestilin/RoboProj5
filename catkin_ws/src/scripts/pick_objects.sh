@@ -20,4 +20,4 @@ xterm -e "roslaunch turtlebot_rviz_launchers view_navigation.launch" &
 
 sleep 20
 
-xterm -e "roslaunch pick_objects pick_objects.launch"
+xterm -e "roslaunch pick_objects pick_objects_test.launch"

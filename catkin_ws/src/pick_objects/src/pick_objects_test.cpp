@@ -2,7 +2,6 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 #include <string>
-#include <geometry_msgs/Vector3.h>
 
 // Define a client for to send goal requests to the move_base server through a SimpleActionClient
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
@@ -42,16 +41,14 @@ void goto_goal(double x, double y, std::string goal_name) {
     ROS_INFO("The base failed to reach goal");
 }
 
+// test by sending a pickup goal, waiting 5 seconds, and 
+// sending a dropoff goal
 
 int main(int argc, char** argv){
   // Initialize the simple_navigation_goals node
   ros::init(argc, argv, "simple_navigation_goals");
 
 	ros::NodeHandle n;
-
-	// publish the location of the object on a topic
-	ros::Publisher marker_pub = n.advertise<geometry_msgs::Vector3>("marker_position", 1);
-	geometry_msgs::Vector3 marker_msg;
 	
 	// pickup and dropoff locations
 	double pickup_x = 6.0;
@@ -61,36 +58,18 @@ int main(int argc, char** argv){
   double dropoff_y = -4.0;
 	double dropoff_z = 0.0;
 
-	marker_msg.x = pickup_x;
-	marker_msg.y = pickup_y;
-	marker_msg.z = pickup_z;
-	
-	// block until there is a subscriber to marker_position topic
-	ROS_INFO("Waiting for subscriber to marker_position topic");
-	while (marker_pub.getNumSubscribers() < 1) {
-		// wait
-	}
-
-	// publish pickup location
-	marker_pub.publish(marker_msg);
-
 	// go to the pickup location
   goto_goal(pickup_x, pickup_y, "pickup zone");
-	
-	marker_msg.x = dropoff_x;
-	marker_msg.y = dropoff_y;
-	marker_msg.z = dropoff_z;
 
-	// publish dropoff location
-  marker_pub.publish(marker_msg);
-
+	// wait for 5 seconds
   ros::Duration(5).sleep();
 
   // go to the dropoff location
   goto_goal(dropoff_x, dropoff_y, "dropoff zone");
 
-
   ros::Duration(5).sleep();  
+
+	ros::spin();
 
   return 0;
 }
