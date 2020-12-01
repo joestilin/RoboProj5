@@ -1,7 +1,7 @@
 # RoboProj5
 Project 5 of the Udacity Robotics Software Engineer NanoDegree.
 
-## What This Do?
+## What Does This Do?
 A simulated turtlebot robot navigates to pickup and drop-off locations in a Gazebo world environment. A marker is 
 displayed at the pickup location until the robot reaches it, and reappears when the robot subsequently reaches the
 drop-off location.
